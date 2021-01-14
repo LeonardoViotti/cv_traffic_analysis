@@ -88,7 +88,9 @@ class VideoTracker(object):
             bbox_xywh, cls_conf, cls_ids = self.detector(im)
 
             # select person class
-            mask = cls_ids == 0
+            person = cls_ids==0
+            car = cls_ids==2
+            mask = person + car
 
             bbox_xywh = bbox_xywh[mask]
             # bbox dilation just in case bbox too small, delete this line if using a better pedestrian detector
