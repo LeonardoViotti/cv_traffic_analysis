@@ -104,6 +104,7 @@ class VideoTracker(object):
             
             # do tracking
             outputs = self.deepsort.update(bbox_xywh, cls_conf, im)
+            self.outputs = outputs
             
             # draw boxes for visualization
             if len(outputs) > 0:
@@ -132,6 +133,13 @@ class VideoTracker(object):
             # logging
             self.logger.info("time: {:.03f}s, fps: {:.03f}, detection numbers: {}, tracking numbers: {}" \
                              .format(end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs)))
+            
+            # # Break out by pressing 'q' when window is selected
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break
+    
+    # Make sure there are no open graphics devices
+    # cv2.destroyAllWindows()
 
 # Emulate parser behaviour so I can run in on interactive mode without making significant changes to the code
 
@@ -167,12 +175,25 @@ cfg.merge_from_file(args.config_deepsort)
 with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
         vdo_trk.run()
 
-vdo_trk.args.cam
+# vdo_trk.args.cam
 vdo_trk.bbox_xywh
 vdo_trk.cls_conf
 vdo_trk.cls_ids
+outputs = vdo_trk.outputs
 
+# Recreate resutls to add conf and class
+bbox_tlwh = []
+bbox_xyxy = outputs[:, :4]
+identities = outputs[:, -1]
+# ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
 
-# cv2.destroyAllWindows()
+for bb_xyxy in bbox_xyxy:
+    bbox_tlwh.append(vdo_trk.deepsort._xyxy_to_tlwh(bb_xyxy))
+
+results = []
+idx_frame = 0
+results.append((idx_frame - 1, bbox_tlwh, identities))
+
+cv2.destroyAllWindows()
 
 
