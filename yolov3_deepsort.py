@@ -84,23 +84,23 @@ class VideoTracker(object):
             _, ori_im = self.vdo.retrieve()
             im = cv2.cvtColor(ori_im, cv2.COLOR_BGR2RGB)
             
-            # do detection
+            # Detection on each frame
             bbox_xywh, cls_conf, cls_ids = self.detector(im)
             
-            # select person class
+            # Filter detection classes
             person = cls_ids==0
             car = cls_ids==2
             mask = person + car
             
             bbox_xywh = bbox_xywh[mask]
-            # bbox dilation just in case bbox too small, delete this line if using a better pedestrian detector
+            #Bbox dilation just in case bbox too small
             bbox_xywh[:, 3:] *= 1.2
             cls_conf = cls_conf[mask]
             
-            # do tracking
+            # Tracking
             outputs = self.deepsort.update(bbox_xywh, cls_conf, im)
             
-            # draw boxes for visualization
+            # Draw boxes for visualization
             if len(outputs) > 0:
                 bbox_tlwh = []
                 bbox_xyxy = outputs[:, :4]
