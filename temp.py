@@ -110,18 +110,19 @@ class VideoTracker(object):
             cls_ids = cls_ids[mask]
             
             # Tracking
-            outputs = self.deepsort.update(bbox_xywh, cls_conf, im)
+            outputs = self.deepsort.update(bbox_xywh, cls_conf, cls_ids, im)
             
             # Make public attribute
             self.outputs = outputs
+            self.detections = detections_t
             self.cls_conf = cls_conf
             self.cls_ids = cls_ids
             
             # Draw boxes for visualization
             if len(outputs) > 0:
                 bbox_tlwh = []
-                bbox_xyxy = outputs[:, :4]
-                identities = outputs[:, -1]
+                bbox_xyxy = outputs[:, :4].astype(int)
+                identities = outputs[:, 4].astype(int)
                 ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
                 
                 for bb_xyxy in bbox_xyxy:
@@ -228,7 +229,7 @@ with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
 vdo_trk.cls_conf.shape
 # vdo_trk.cls_ids.shape
 vdo_trk.outputs.shape
-vdo_trk.detections_lt[1].shape
+vdo_trk.detections
 
 #------------------------------------------------------------------------
 # Exporting data
