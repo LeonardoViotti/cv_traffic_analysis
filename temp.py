@@ -180,7 +180,7 @@ class VideoTracker(object):
                              .format(end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs)))\
             
             # Make it shorter for piloting
-            if idx_frame > 5:
+            if idx_frame > 10:
                 break
         #Turn to pandas and export csv
         pd.DataFrame(self.final_mat, 
