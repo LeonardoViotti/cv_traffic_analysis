@@ -102,18 +102,25 @@ class VideoTracker(object):
             detections_t = self.detector(im)
             bbox_xywh, cls_conf, cls_ids = detections_t[0], detections_t[1], detections_t[2]            
             
-            # Filter detection classes
-            person = cls_ids==0
-            car = cls_ids==2
-            mask = person + car
+            # Filter detection classes to only relevant cases.
+            # This is mostly to remove noise as it doesn't affect performance.
+            keep_classes = [0, # person
+                            1, # bicycle
+                            2, # car 
+                            3, # motorbyke
+                            5, # bus
+                            7] # truck
             
+            mask = np.isin(cls_ids, keep_classes)
+            
+            # Process detections
             bbox_xywh = bbox_xywh[mask]
             #Bbox dilation just in case bbox too small
             bbox_xywh[:, 3:] *= 1.2
             cls_conf = cls_conf[mask]
             cls_ids = cls_ids[mask]
             
-            # Tracking
+            # Uodate tracking
             outputs = self.deepsort.update(bbox_xywh, cls_conf, cls_ids, im)
             
             # # Make public attributes for debugging
