@@ -12,3 +12,4 @@ build/
 *.so
 *.txt
 *.pyd
+*.csv
