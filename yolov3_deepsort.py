@@ -5,6 +5,7 @@ import argparse
 import torch
 import warnings
 import numpy as np
+import pandas as pd
 
 from detector import build_detector
 from deep_sort import build_tracker
@@ -81,8 +82,14 @@ class VideoTracker(object):
             print(exc_type, exc_value, exc_traceback)
     
     def run(self):
-        results = []
+        # Base variables
         idx_frame = 0
+        self.detections_lt = None
+        
+        # Create empty results array to be appended with frame data
+        self.results_array = np.empty(shape = (0,7))
+        
+        # Loop over video frames
         while self.vdo.grab():
             idx_frame += 1
             if idx_frame % self.args.frame_interval:
@@ -129,12 +136,33 @@ class VideoTracker(object):
             if self.args.save_path:
                 self.writer.write(ori_im)
             
-            # save results
-            write_results(self.save_results_path, results, 'mot')
+            #------------------------------------------------------------------------
+            # Exporting data
+            if len(outputs) > 0:
+                # Tracking data for frame
+                tracking_array_i = outputs
+                
+                # Add frame number to tracking array
+                frame_num_array_i = np.full((tracking_array_i.shape[0], 1), idx_frame - 1)
+                results_array_i = np.append(frame_num_array_i, tracking_array_i, 1)
+                
+                # Add frame data to results array
+                self.results_array = np.append(self.results_array, results_array_i,0)
             
-            # logging
-            self.logger.info("time: {:.03f}s, fps: {:.03f}, detection numbers: {}, tracking numbers: {}" \
-                             .format(end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs)))
+            #------------------------------------------------------------------------
+            # Logging
+            self.logger.info("frame: {},time: {:.03f}s, fps: {:.03f}, detection numbers: {}, tracking numbers: {}" \
+                             .format(idx_frame - 1, end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs)))\
+            
+            # Make it shorter for piloting
+            # if idx_frame > 10:
+            #     break
+        #----------------------------------------------------------------------------
+        # Export outputs
+        # Turn to pandas and export csv
+        pd.DataFrame(self.results_array, 
+                    columns= ['frame', 'x_i', 'y_i', 'x_j', 'y_j','obj_id', 'class']).\
+                to_csv(self.save_results_path)
 
 
 def parse_args():
