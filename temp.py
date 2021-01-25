@@ -58,9 +58,17 @@ class VideoTracker(object):
         if self.args.save_path:
             os.makedirs(self.args.save_path, exist_ok=True)
             
-            # path of saved video and results
-            self.save_video_path = os.path.join(self.args.save_path, "results.avi")
-            self.save_results_path = os.path.join(self.args.save_path, "results.csv")
+            # Paths of saved video and results
+            def parse_file_name(path):
+                in_file_name = path.split(sep = '/')[-1]
+                video_name = in_file_name.split('.')[0] + '.avi'
+                results_name = in_file_name.split('.')[0] + '.csv'
+                return video_name, results_name
+            
+            video_output_filename, results_filename = parse_file_name(self.video_path)
+            
+            self.save_video_path = os.path.join(self.args.save_path, video_output_filename)
+            self.save_results_path = os.path.join(self.args.save_path, results_filename)
             
             # create video writer
             fourcc = cv2.VideoWriter_fourcc(*'MJPG')
@@ -77,12 +85,12 @@ class VideoTracker(object):
     
     def run(self):
         # Base variables
-        # results = []
         idx_frame = 0
         self.detections_lt = None
         
-        # Create empty array to be appended if frame data
-        self.results = np.empty(shape = (0,8)) # 8 is the number of cols
+        # Create empty results array to be appended with frame data
+        self.results_array = np.empty(shape = (0,7))
+        
         
         while self.vdo.grab():
             idx_frame += 1
@@ -112,7 +120,7 @@ class VideoTracker(object):
             # Tracking
             outputs = self.deepsort.update(bbox_xywh, cls_conf, cls_ids, im)
             
-            # Make public attribute
+            # Make public attributes
             self.outputs = outputs
             self.detections = detections_t
             self.cls_conf = cls_conf
@@ -128,7 +136,6 @@ class VideoTracker(object):
                 for bb_xyxy in bbox_xyxy:
                     bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
                 
-                # results.append((idx_frame - 1, bbox_tlwh, identities))
             
             end = time.time()
             
@@ -141,6 +148,17 @@ class VideoTracker(object):
             
             #------------------------------------------------------------------------
             # Exporting data
+            if len(outputs) > 0:
+                # Tracking data for frame
+                tracking_array_i = outputs
+                
+                # Add frame number to tracking array
+                frame_num_array_i = np.full((tracking_array_i.shape[0], 1), idx_frame - 1)
+                results_array_i = np.append(frame_num_array_i, tracking_array_i, 1)
+                
+                # Add frame data to results array
+                self.results_array = np.append(self.results_array, results_array_i,0)
+            
             
             # PROBLEMA: outputs esta um frame depois de detections. entao, eu preciso usar
             # os valores da detecao do frame anterior pra criar os dados e ter certeza de
@@ -176,15 +194,17 @@ class VideoTracker(object):
             
             #------------------------------------------------------------------------
             # Logging
-            self.logger.info("time: {:.03f}s, fps: {:.03f}, detection numbers: {}, tracking numbers: {}" \
-                             .format(end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs)))\
+            self.logger.info("frame: {},time: {:.03f}s, fps: {:.03f}, detection numbers: {}, tracking numbers: {}" \
+                             .format(idx_frame - 1, end - start, 1 / (end - start), bbox_xywh.shape[0], len(outputs)))\
             
             # Make it shorter for piloting
             if idx_frame > 10:
                 break
-        #Turn to pandas and export csv
-        pd.DataFrame(self.final_mat, 
-                    columns= ['frame', 'obj_id', 'x_i', 'y_i', 'x_j', 'y_j', 'class', 'conf']).\
+        #----------------------------------------------------------------------------
+        # Export outputs
+        # Turn to pandas and export csv
+        pd.DataFrame(self.results_array, 
+                    columns= ['frame', 'x_i', 'y_i', 'x_j', 'y_j','obj_id', 'class']).\
                 to_csv(self.save_results_path)
 
 
@@ -225,12 +245,13 @@ cfg.merge_from_file(args.config_deepsort)
 with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
         vdo_trk.run()
 
-# # vdo_trk.args.cam
-vdo_trk.cls_conf.shape
-# vdo_trk.cls_ids.shape
-vdo_trk.outputs.shape
-vdo_trk.detections
+# # # vdo_trk.args.cam
+# vdo_trk.cls_conf.shape
+# # vdo_trk.cls_ids.shape
+# vdo_trk.outputs
+# vdo_trk.detections
 
+# vdo_trk.results_array
 #------------------------------------------------------------------------
 # Exporting data
 
