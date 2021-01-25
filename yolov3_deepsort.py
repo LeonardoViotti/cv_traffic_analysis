@@ -55,9 +55,17 @@ class VideoTracker(object):
         if self.args.save_path:
             os.makedirs(self.args.save_path, exist_ok=True)
             
-            # path of saved video and results
-            self.save_video_path = os.path.join(self.args.save_path, "results.avi")
-            self.save_results_path = os.path.join(self.args.save_path, "results.txt")
+            # Paths of saved video and results
+            def parse_file_name(path):
+                in_file_name = path.split(sep = '/')[-1]
+                video_name = in_file_name.split('.')[0] + '.avi'
+                results_name = in_file_name.split('.')[0] + '.csv'
+                return video_name, results_name
+            
+            video_output_filename, results_filename = parse_file_name(self.video_path)
+            
+            self.save_video_path = os.path.join(self.args.save_path, video_output_filename)
+            self.save_results_path = os.path.join(self.args.save_path, results_filename)
             
             # create video writer
             fourcc = cv2.VideoWriter_fourcc(*'MJPG')
