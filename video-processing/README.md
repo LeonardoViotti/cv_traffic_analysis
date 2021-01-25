@@ -26,7 +26,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 1. Clone this repository
 ```
-git clone git@github.com:ZQPei/deep_sort_pytorch.git
+git clone git@github.com:LeonardoViotti/cv_traffic_analysis.git
 ```
 
 2. Download YOLOv3 parameters
@@ -54,7 +54,7 @@ cd ../../..
 
 5. Run demo
 ```
-usage: python yolov3_deepsort.py VIDEO_PATH
+usage: python video_processing.py VIDEO_PATH
                                 [--help]
                                 [--frame_interval FRAME_INTERVAL]
                                 [--config_detection CONFIG_DETECTION]
@@ -65,17 +65,15 @@ usage: python yolov3_deepsort.py VIDEO_PATH
                                 [--save_path SAVE_PATH]          
                                 [--cpu]          
 
-# yolov3 + deepsort
-python yolov3_deepsort.py [VIDEO_PATH]
-
 # yolov3_tiny + deepsort
-python yolov3_deepsort.py [VIDEO_PATH] --config_detection ./configs/yolov3_tiny.yaml
+python video_processing.py [VIDEO_PATH] --config_detection ./configs/yolov3_tiny.yaml
 
 # yolov3 + deepsort on webcam
-python3 yolov3_deepsort.py /dev/video0 --camera 0
+python3 video_processing.py /dev/video0 --camera 0
 
 # yolov3_tiny + deepsort on webcam
-python3 yolov3_deepsort.py /dev/video0 --config_detection ./configs/yolov3_tiny.yaml --camera 0
+python3 video_processing.py /dev/video0 --config_detection ./configs/yolov3_tiny.yaml --camera 0
 ```
-Use `--display` to enable display.  
-Results will be saved to `./output/results.avi` and `./output/results.txt`.
+Use `--display` to enable display.
+
+Results will be saved to `../output/`.
