@@ -1,3 +1,15 @@
+"""
+                        CV traffic analysis
+                          Video processing
+
+This code creates the VideoTracker class and provides basic command line interface to
+process video inputs.
+
+"""
+
+
+#-------------------------------------------------------------------------------------
+# Settings
 import os
 import cv2
 import time
@@ -14,6 +26,8 @@ from utils.parser import get_config
 from utils.log import get_logger
 from utils.io import write_results
 
+
+#-------------------------------------------------------------------------------------
 
 class VideoTracker(object):
     def __init__(self, cfg, args, video_path):
@@ -151,7 +165,11 @@ class VideoTracker(object):
                 self.writer.write(ori_im)
             
             #------------------------------------------------------------------------
-            # Exporting data
+            # Exporting data processing
+            
+            # This processes each frame tracking data and appends it to the results
+            # array that will be exported
+            
             if len(outputs) > 0:
                 # Tracking data for frame
                 tracking_array_i = outputs
@@ -178,6 +196,8 @@ class VideoTracker(object):
                     columns= ['frame', 'x_i', 'y_i', 'x_j', 'y_j','obj_id', 'class']).\
                 to_csv(self.save_results_path)
 
+
+#-------------------------------------------------------------------------------------
 
 def parse_args():
     parser = argparse.ArgumentParser()
