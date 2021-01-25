@@ -84,7 +84,6 @@ class VideoTracker(object):
     def run(self):
         # Base variables
         idx_frame = 0
-        self.detections_lt = None
         
         # Create empty results array to be appended with frame data
         self.results_array = np.empty(shape = (0,7))
@@ -100,7 +99,8 @@ class VideoTracker(object):
             im = cv2.cvtColor(ori_im, cv2.COLOR_BGR2RGB)
             
             # Detection on each frame
-            bbox_xywh, cls_conf, cls_ids = self.detector(im)
+            detections_t = self.detector(im)
+            bbox_xywh, cls_conf, cls_ids = detections_t[0], detections_t[1], detections_t[2]            
             
             # Filter detection classes
             person = cls_ids==0
@@ -111,21 +111,28 @@ class VideoTracker(object):
             #Bbox dilation just in case bbox too small
             bbox_xywh[:, 3:] *= 1.2
             cls_conf = cls_conf[mask]
+            cls_ids = cls_ids[mask]
             
             # Tracking
-            outputs = self.deepsort.update(bbox_xywh, cls_conf, im)
+            outputs = self.deepsort.update(bbox_xywh, cls_conf, cls_ids, im)
+            
+            # # Make public attributes for debugging
+            #self.im = im
+            # self.outputs = outputs
+            # self.detections = detections_t
+            # self.cls_conf = cls_conf
+            # self.cls_ids = cls_ids
             
             # Draw boxes for visualization
             if len(outputs) > 0:
                 bbox_tlwh = []
-                bbox_xyxy = outputs[:, :4]
-                identities = outputs[:, -1]
+                bbox_xyxy = outputs[:, :4].astype(int)
+                identities = outputs[:, 4].astype(int)
                 ori_im = draw_boxes(ori_im, bbox_xyxy, identities)
                 
                 for bb_xyxy in bbox_xyxy:
                     bbox_tlwh.append(self.deepsort._xyxy_to_tlwh(bb_xyxy))
                 
-                results.append((idx_frame - 1, bbox_tlwh, identities))
             
             end = time.time()
             
