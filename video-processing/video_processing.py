@@ -226,6 +226,3 @@ if __name__ == "__main__":
     
     with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
         vdo_trk.run()
-    
-    print("(os.path.exists(self.args.save_path) & (not self.args.no_export))")
-    print((os.path.exists(self.args.save_path) & (not self.args.no_export)))
