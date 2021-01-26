@@ -1,6 +1,6 @@
 from video_processing import *
 
-VIDEO_PATH = ".."
+VIDEO_PATH = "../data/11 sample-short.mp4"
 
 # Emulate parser behaviour so I can run in on interactive mode without making significant changes to the code
 class mock_parser():
@@ -12,7 +12,7 @@ class mock_parser():
         self.frame_interval = 1
         self.display_width = 800
         self.display_height = 600
-        self.save_path ="./output/"
+        self.save_path ="../output/"
         # self.use_cuda = True
         self.use_cuda = False
         self.cam =-1

@@ -61,7 +61,7 @@ class VideoTracker(object):
             self.im_height = frame.shape[1]
         
         else:
-            assert os.path.isfile(self.video_path), "Path error"
+            assert os.path.isfile(self.video_path), "Error: path not found!"
             self.vdo.open(self.video_path)
             self.im_width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH))
             self.im_height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -72,7 +72,7 @@ class VideoTracker(object):
             
             # Paths of saved video and results
             def parse_file_name(path):
-                in_file_name = path.split(sep = '/')[-1]
+                in_file_name = os.path.basename(path)
                 video_name = in_file_name.split('.')[0] + '.avi'
                 results_name = in_file_name.split('.')[0] + '.csv'
                 return video_name, results_name
@@ -87,7 +87,7 @@ class VideoTracker(object):
             self.writer = cv2.VideoWriter(self.save_video_path, fourcc, 20, (self.im_width, self.im_height))
             
             # logging
-            self.logger.info("Save results to {}".format(self.args.save_path))
+            self.logger.info("Saving results to {}".format(self.save_results_path))
         
         return self
     
@@ -194,7 +194,7 @@ class VideoTracker(object):
         # Turn to pandas and export csv
         pd.DataFrame(self.results_array, 
                     columns= ['frame', 'x_i', 'y_i', 'x_j', 'y_j','obj_id', 'class']).\
-                to_csv(self.save_results_path)
+                to_csv(self.save_results_path, index = False)
 
 
 #-------------------------------------------------------------------------------------
