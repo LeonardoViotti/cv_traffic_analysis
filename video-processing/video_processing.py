@@ -83,8 +83,9 @@ class VideoTracker(object):
             self.save_results_path = os.path.join(self.args.save_path, results_filename)
             
             # create video writer
-            fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-            self.writer = cv2.VideoWriter(self.save_video_path, fourcc, 20, (self.im_width, self.im_height))
+            if (os.path.exists(self.args.save_path) & (not self.args.no_export)):
+                fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+                self.writer = cv2.VideoWriter(self.save_video_path, fourcc, 20, (self.im_width, self.im_height))
             
             # logging
             self.logger.info("Saving results to {}".format(self.save_results_path))
@@ -161,7 +162,7 @@ class VideoTracker(object):
                 cv2.imshow("test", ori_im)
                 cv2.waitKey(1)
             
-            if self.args.save_path:
+            if (os.path.exists(self.args.save_path) & (not self.args.no_export)):
                 self.writer.write(ori_im)
             
             #------------------------------------------------------------------------
@@ -192,9 +193,10 @@ class VideoTracker(object):
         #----------------------------------------------------------------------------
         # Export outputs
         # Turn to pandas and export csv
-        pd.DataFrame(self.results_array, 
+        if (os.path.exists(self.args.save_path) & (not self.args.no_export)):
+            pd.DataFrame(self.results_array, 
                     columns= ['frame', 'x_i', 'y_i', 'x_j', 'y_j','obj_id', 'class']).\
-                to_csv(self.save_results_path, index = False)
+                    to_csv(self.save_results_path, index = False)
 
 
 #-------------------------------------------------------------------------------------
@@ -210,6 +212,7 @@ def parse_args():
     parser.add_argument("--display_width", type=int, default=800)
     parser.add_argument("--display_height", type=int, default=600)
     parser.add_argument("--save_path", type=str, default="../output/")
+    parser.add_argument("--no-export", dest = 'no_export', nargs='?', const=True, default=False)
     parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
     parser.add_argument("--camera", action="store", dest="cam", type=int, default="-1")
     return parser.parse_args()
@@ -223,3 +226,6 @@ if __name__ == "__main__":
     
     with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
         vdo_trk.run()
+    
+    print("(os.path.exists(self.args.save_path) & (not self.args.no_export))")
+    print((os.path.exists(self.args.save_path) & (not self.args.no_export)))
