@@ -4,32 +4,39 @@
 # https://towardsdatascience.com/a-social-distancing-detector-using-a-tensorflow-object-detection-model-python-and-opencv-4450a431238
 
 
-def compute_perspective_transform(corner_points,width,height,image):
-	""" Compute the transformation matrix
-	@ corner_points : 4 corner points selected from the image
-	@ height, width : size of the image
-	return : transformation matrix and the transformed image
-	"""
-	# Create an array out of the 4 corner points
-	corner_points_array = np.float32(corner_points)
-	# Create an array with the parameters (the dimensions) required to build the matrix
-	img_params = np.float32([[0,0],[width,0],[0,height],[width,height]])
-	# Compute and return the transformation matrix
-	matrix = cv2.getPerspectiveTransform(corner_points_array,img_params) 
-	img_transformed = cv2.warpPerspective(image,matrix,(width,height))
-	return matrix,img_transformed
+# def compute_perspective_transform(corner_points,width,height,image):
+# 	""" Compute the transformation matrix
+# 	@ corner_points : 4 corner points selected from the image
+# 	@ height, width : size of the image
+# 	return : transformation matrix and the transformed image
+# 	"""
+# 	# Create an array out of the 4 corner points
+# 	corner_points_array = np.float32(corner_points)
+# 	# Create an array with the parameters (the dimensions) required to build the matrix
+# 	img_params = np.float32([[0,0],[width,0],[0,height],[width,height]])
+# 	# Compute and return the transformation matrix
+# 	matrix = cv2.getPerspectiveTransform(corner_points_array,img_params) 
+# 	img_transformed = cv2.warpPerspective(image,matrix,(width,height))
+# 	return matrix,img_transformed
 
-# p0, p1, p2, p3 = (231, 34), (13, 137), (413, 330), (477, 81)
-# mt, img_plane = compute_perspective_transform([p0, p3, p1, p2],  img_0.shape[0],  img_0.shape[1], img_0)
+# # p0, p1, p2, p3 = (231, 34), (13, 137), (413, 330), (477, 81)
+# # mt, img_plane = compute_perspective_transform([p0, p3, p1, p2],  img_0.shape[0],  img_0.shape[1], img_0)
 
 
-# Order has to be top-left, top-right, bottom-left, bottom-right
-p0, p1, p2, p3 = (231, 34), (477, 81), (13, 137), (413, 330)
-# drawCentroid(img_0, p4)
-# stable_show(img_0)
+# # Order has to be top-left, top-right, bottom-left, bottom-right
+# p0, p1, p2, p3 = (231, 34), (477, 81), (13, 137), (413, 330)
+# # drawCentroid(img_0, p4)
+# # stable_show(img_0)
 
-mt, img_plane = compute_perspective_transform([p0, p1, p2, p3],  img_0.shape[0],  img_0.shape[1], img_0)
-stable_show(img_plane)
+# mt, img_plane = compute_perspective_transform([p0, p1, p2, p3],  img_0.shape[0],  img_0.shape[1], img_0)
+# ishow(img_plane)
+
+# # Plot all points
+# img = cp.deepcopy(img_0)
+
+
+# cv2.circle(img, p2, 2, (255, 0, 255), -1)
+
 
 
 
@@ -97,6 +104,10 @@ class PixelMapper(object):
         
         return (pixel[:2,:]/pixel[2,:]).T
 
+#------------------------------------------------------------------------------
+# Coordinates mapping 
+
+
 # Create one instance of PixelMapper to convert video frames to coordinates
 quad_coords = {
     "lonlat": np.array([
@@ -139,22 +150,22 @@ pm_sat = PixelMapper(quad_coords_sat["pixel"], quad_coords_sat["lonlat"])
 
 # Anotate trajectory on initial video frame
 img_0_conflict = img_0.copy()
-draw_trajectories(img_0_conflict, t_car)
-img_show(img_0_conflict)
+# draw_trajectories(img_0_conflict, t_car)
+ishow(img_0_conflict)
 
 # Transform trajectory into long lat
-t_car_long_lat = pm.pixel_to_lonlat(t_car[0]) # t_car created in draft-intersections.py
+# t_car_long_lat = pm.pixel_to_lonlat(t_car[0]) # t_car created in draft-intersections.py
 
 # Load sat image
-img_0_lat_long = cv2.imread(DATA + '2- sample-sat.jpg')
-img_show(img_0_lat_long)
+img_0_lat_long = cv2.imread('../data/2-sat.jpg')
+ishow(img_0_lat_long)
 
 # Transform lat long trajectory into pixels of sat image
-t_car_satpixels = pm_sat.lonlat_to_pixel(t_car_long_lat).astype(int)
+# t_car_satpixels = pm_sat.lonlat_to_pixel(t_car_long_lat).astype(int)
 
 # Anotate trajectory on sat image
 draw_trajectories(img_0_lat_long, t_car_satpixels)
-img_show(img_0_lat_long)
+ishow(img_0_lat_long)
 
 def draw_trajectories(img, trajectory_array):
 	# if len(trajectory_array.shape) < 3:
