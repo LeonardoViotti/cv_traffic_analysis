@@ -5,7 +5,7 @@ import os
 
 
 # Functions
-def img_show(img, max_t = 10000):
+def ishow(img, max_t = 10000):
     # Kill window if Q is pressed
     if cv2.waitKey(1) & 0xFF == ord('q'):
         v2.destroyAllWindows()
@@ -17,7 +17,7 @@ def img_show(img, max_t = 10000):
     cv2.waitKey(max_t)
     cv2.destroyAllWindows()
 
-def stable_show_vid(cap):
+def vshow(cap):
     while True:
         sucess, img_i = cap.read()
         cv2.imshow("Video", img_i)
