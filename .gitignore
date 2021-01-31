@@ -14,3 +14,4 @@ build/
 *.pyd
 *.csv
 *.png
+*.jpg
