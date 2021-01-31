@@ -67,27 +67,3 @@ def draw_trajectory(org_img, trajectory_df, color_dict = color_dict):
         # print(p)
         cv2.line(img, tuple(trajectory_df.iloc[p-1]), tuple(trajectory_df.iloc[p]), color_dict[obj_class], 2)
     return(img)
-
-#------------------------------------------------------------------------------
-# Bulk annotation for multiple objects at once
-
-# def draw_trajectories(org_img, trajectories_df):
-#     img = cp.deepcopy(org_img)
-#     # Loop over different object ids in the df
-#     for oid in trajectories_df['obj_id'].unique():
-#         df_i = trajectories_df[trajectories_df['obj_id'] == oid]
-#         # print(df_i.head(5))
-#         img = draw_trajectory(img, df_i)
-
-foo = draw_trajectory(img_0, trajectories_df)
-
-df_i = trajectories_df[trajectories_df['obj_id'] == oid].sort_values('frame')
-
-
-trajectories_df = df_conf
-
-img = cp.deepcopy(img_0)
-for oid in trajectories_df['obj_id'].unique():
-    df_i = trajectories_df[trajectories_df['obj_id'] == oid]
-    # print(df_i.head(5))
-    img = draw_trajectory(img, df_i)
