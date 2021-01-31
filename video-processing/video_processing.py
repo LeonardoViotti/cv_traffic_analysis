@@ -195,8 +195,17 @@ class VideoTracker(object):
         # Turn to pandas and export csv
         if (os.path.exists(self.args.save_path) & (not self.args.no_export)):
             pd.DataFrame(self.results_array, 
-                    columns= ['frame', 'x_i', 'y_i', 'x_j', 'y_j','obj_id', 'class']).\
-                    to_csv(self.save_results_path, index = False)
+                         columns= ['frame', 'xi', 'yi', 'xj', 'yj','obj_id', 'class'])\
+                .astype({'frame': int, 
+                         'xi': int,
+                         'yi': int,
+                         'xj': int,
+                         'yj': int,
+                         'obj_id': int,
+                         'class': int
+                        # 'conf': float,
+                            })\
+                    .to_csv(self.save_results_path, index = False)
 
 
 #-------------------------------------------------------------------------------------
