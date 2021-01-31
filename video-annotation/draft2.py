@@ -7,29 +7,19 @@ import copy as cp
 import pandas as pd
 
 
-video_file_name = '../data/11-sample-short.mp4'
+video_file_name = '../data/2-sample-2020.mp4'
 
 # Load video
 cap = cv2.VideoCapture(video_file_name)
 
 # Load tracking csv
-data = pd.read_csv('../output/11-sample-short.csv')
+data = pd.read_csv('../output/2-sample-2020.csv')
 
-# Convert all columns to integer for now
-convert_dict = {'frame': int, 
-                'x_i': int,
-                'y_i': int,
-                'x_j': int,
-                'y_j': int,
-                'obj_id': int,
-                'class': int
-                # 'conf': float,
-               } 
-  
-data = data.astype(convert_dict) 
+
 
 #------------------------------------------------------------------------------
 # Process data
+
 
 # Replace Coco class ids with str labels
 class_dict = {0: 'Person', 
@@ -44,6 +34,13 @@ data['class'] = data['class'].map(class_dict)
 # COLORS = np.random.uniform(0, 255, size=(len(class_dict), 3))
 
 # class_dict.keys()
+
+# Create centroids 
+
+data['cx'] =  round(data['xi'] + (data['xj'] - data['xi'])/2).astype(int)
+data['cy'] =  round(data['yi'] + (data['yj'] - data['yi'])/2).astype(int)
+
+]
 #------------------------------------------------------------------------------
 # Select first frame
 cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
@@ -59,7 +56,7 @@ COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 
 # Draw single box function
 def draw_box(org_img, bbox_df, class_id):
-    x1,y1,x2,y2 = bbox_df['x_i'], bbox_df['y_i'], bbox_df['x_j'], bbox_df['y_j']
+    x1,y1,x2,y2 = bbox_df['xi'], bbox_df['yi'], bbox_df['xj'], bbox_df['yj']
     # Create another image
     img = cp.deepcopy(org_img)
     
@@ -76,45 +73,44 @@ def draw_box(org_img, bbox_df, class_id):
     return img
 
 # Draw single point
-def draw_centroid(org_img, bbox_df):
-    x1,y1,x2,y2 = bbox_df['x_i'], bbox_df['y_i'], bbox_df['x_j'], bbox_df['y_j']
-    # Create another image
+def draw_centroid(org_img, cent_df):
     img = cp.deepcopy(org_img)
-    # Calculate centroid
-    cx = round(x1 + (x2 - x1)/2)
-    cy = round(y1 + (y2 - y1)/2)
     # Anotate
-    cv2.circle(img, (cx, cy), 2, (255, 255, 255), -1)
+    cv2.circle(img, (cent_df['cx'], cent_df['cy']), 2, (255, 255, 255), -1)
     
     return img
+    
+def draw_trajectory(org_img, trajectory_df):
+    """
+    This draws a trakjectorie line on a frame
+    img -  has to be an image converted into numpy.ndarray
+    trajectory_df 
+    """
+    img = cp.deepcopy(org_img)
+    for p in range(1, len(trajectory_df)):
+        # print(p)
+        cv2.line(img, tuple(trajectory_df.iloc[p-1]), tuple(trajectory_df.iloc[p]), (0, 0, 255), 2)
+    return(img)
 
 
-def draw_trajectory(img, trajectory_df, class_id):
-    pass
+df = data[data['obj_id'] == 1][['cx', 'cy']]
+foo = cp.deepcopy(img_0)
 
-# Draw a dataframe of boxes NOT WORKING
-def draw_boxes(or_img, data):
-    # img = cp.deepcopy(or_img)
-    # for index,row in data.iterrows():
-    #     draw_box(or_img, row, row['class'])
-    # return img
-    pass
+trajectory_df = df
 
-# very simlified version of the data
-data_i = data[data['frame'] == 2][['x_i','y_i', 'x_j', 'y_j', 'class']]
-data_i = data_i.iloc[0:3,]
 
-bbox_df = data_i
 
-data_i.loc[0]
+for idx, row in df.iterrows():
+    print(df[idx])
 
-foo = draw_box(img_0, data_i.loc[0], data_i.loc[0]['class'])
-foo = draw_centroid(img_0, data_i.loc[0])
+tuple(df.iloc[0])
+
+
 # foo = draw_boxes(img_0, data_i)
 
 
 # img_show(img_0)
-# img_show(foo)
+img_show(foo)
 
 #------------------------------------------------------------------------------
 # Process video frame by frame
