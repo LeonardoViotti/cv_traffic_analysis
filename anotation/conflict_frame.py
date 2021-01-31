@@ -1,3 +1,8 @@
+#------------------------------------------------------------------------------
+# Frame annotation for a single conflict
+#------------------------------------------------------------------------------
+
+# Ref
 # https://www.youtube.com/watch?v=1FJWXOO1SRI
 
 # Settings
@@ -7,20 +12,25 @@ from modules.draw import *
 import copy as cp
 import pandas as pd
 
+#------------------------------------------------------------------------------
+# Import data
 
-video_file_name = '../data/2-sample-2020.mp4'
+filename = '2-sample-2020'
+
+RAW_DATA_PATH = '../data'
+OUT_PATH = '../output'
+
+# video_file_name = '../data/2-sample-2020.mp4'
+video_file_name = os.path.join(RAW_DATA_PATH, filename + '.mp4')
 
 # Load video
 cap = cv2.VideoCapture(video_file_name)
 
-# Load tracking csv
-data = pd.read_csv('../output/2-sample-2020.csv')
-
-
+# Load tracking data csv
+data = pd.read_csv(os.path.join(OUT_PATH, filename + '.csv'))
 
 #------------------------------------------------------------------------------
 # Process data
-
 
 # Replace Coco class ids with str labels
 class_dict = {0: 'Person', 
@@ -54,12 +64,11 @@ _, img_c = cap.read()
 
 
 #------------------------------------------------------------------------------
-# Colors
+# Subset just conflict into one df per tracked object
 
-df_conf = data[data['obj_id'].isin([21,22])]
-df1 = df_conf[df_conf['obj_id'] == 21]
-df2 = df_conf[df_conf['obj_id'] == 22]
-
+trajectories_df = data[data['obj_id'].isin([21,22])]
+# df1 = trajectories_df[trajectories_df['obj_id'] == 21]
+# df2 = trajectories_df[trajectories_df['obj_id'] == 22]
 
 # Loop over different object ids in the df
 img = cp.deepcopy(img_c)
@@ -68,47 +77,9 @@ for oid in trajectories_df['obj_id'].unique():
     # print(df_i.head(5))
     img = draw_trajectory(img, df_i)
 
-
 ishow(img)
 
-
-#------------------------------------------------------------------------------
-# Process video frame by frame
-
-# # Video loop
-# while True:
-    
-#     # timer for frames per section
-#     timer = cv2.getTickCount()
-    
-#     # Read each frame
-#     success, img_i = cap.read()
-    
-#     # Add fps to display
-#     # fps = cv2.getTickFrequency()/(cv2.getTickCount()-timer)
-#     # cv2.putText(img_i,
-#     #             str(int(fps)),
-#     #             (50,50),
-#     #             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255),2)
-    
-#     # # Add tracked centroids to array
-#     # ct_i = create_centroids(bboxes_i)
-#     # ct_tracked = np.concatenate([ct_tracked,ct_i], axis = 1)
-    
-#     # # draw tracked objects bbox
-#     # for i, new_ct in enumerate(ct_i):
-#     #     drawCentroid(img_i, 
-#     #                  new_ct[0],# new_ct has an extra dimention for the concatenation to work
-#     #                  class_id= classes[i]) 
-    
-#     # Show video
-#     cv2.imshow("Video", img_i)
-#     # Break out by pressing 'q' when window is selected
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-
-# # Make sure there are no open graphics devices
-# cv2.destroyAllWindows()
-
+# Export image
+cv2.imwrite(os.path.join(OUT_PATH, filename + '-cnflct_1.png'), img)
 
 
