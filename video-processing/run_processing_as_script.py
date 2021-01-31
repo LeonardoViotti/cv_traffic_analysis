@@ -1,6 +1,6 @@
 from video_processing import *
 
-VIDEO_PATH = "../data/11 sample-short.mp4"
+VIDEO_PATH = "../11 sample-short.mp4"
 
 # Emulate parser behaviour so I can run in on interactive mode without making significant changes to the code
 class mock_parser():
@@ -34,6 +34,8 @@ cfg.merge_from_file(args.config_deepsort)
 
 with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
         vdo_trk.run()
+
+vdo_trk.save_video_path
 
 # # # vdo_trk.args.cam
 # vdo_trk.cls_conf.shape
