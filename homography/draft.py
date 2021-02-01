@@ -1,7 +1,19 @@
+
 #------------------------------------------------------------------------------
 # Draft homography 
 
 # https://towardsdatascience.com/a-social-distancing-detector-using-a-tensorflow-object-detection-model-python-and-opencv-4450a431238
+
+
+# TODO
+#   - Function that display points in video frame and sat side by side
+#   - Do first with a conflcit trajectory to test.
+#   - Have it flexible enough that can be just applied to the entire results df
+#   - Function to plot one or to trajectories to assert it is working
+
+
+#------------------------------------------------------------------------------
+# ???
 
 
 # def compute_perspective_transform(corner_points,width,height,image):
