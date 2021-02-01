@@ -107,7 +107,6 @@ class PixelMapper(object):
 #------------------------------------------------------------------------------
 # Coordinates mapping 
 
-
 # Create one instance of PixelMapper to convert video frames to coordinates
 quad_coords = {
     "lonlat": np.array([
