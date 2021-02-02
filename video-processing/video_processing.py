@@ -73,7 +73,7 @@ class VideoTracker(object):
             # Paths of saved video and results
             def parse_file_name(path):
                 in_file_name = os.path.basename(path)
-                video_name = in_file_name.split('.')[0] + '.avi'
+                video_name = in_file_name.split('.')[0] + '.mp4'
                 results_name = in_file_name.split('.')[0] + '.csv'
                 return video_name, results_name
             
@@ -84,7 +84,7 @@ class VideoTracker(object):
             
             # create video writer
             if (os.path.exists(self.args.save_path) & (not self.args.no_export)):
-                fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+                fourcc = cv2.VideoWriter_fourcc(*'avc1')
                 self.writer = cv2.VideoWriter(self.save_video_path, fourcc, 20, (self.im_width, self.im_height))
             
             # logging
