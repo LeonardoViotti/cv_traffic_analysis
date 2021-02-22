@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 #------------------------------------------------------------------------------
 # Color to class definition
 
-color_dict = {'Person' : (0,255,0), 
+color_dict = {'Person' : (0,255,255), 
             #   'Bicycle' :, 
               'Car': (0, 0, 255)}
             #   'Motorbyke' :, 
