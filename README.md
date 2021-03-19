@@ -1,6 +1,4 @@
-# Traffic analysis with computer vision
-
-(Under development)
+# Traffic analysis with computer vision (Under development)
 
 Open-source tool for processing and analyzing traffic footage for users without a expertise in Deep Learning or computer vision. 
 
