@@ -226,8 +226,8 @@ def parse_args():
     parser.add_argument("--camera", action="store", dest="cam", type=int, default="-1")
     return parser.parse_args()
 
-
 if __name__ == "__main__":
+    start_time = time.time()
     args = parse_args()
     cfg = get_config()
     cfg.merge_from_file(args.config_detection)
@@ -235,3 +235,4 @@ if __name__ == "__main__":
     
     with VideoTracker(cfg, args, video_path=args.VIDEO_PATH) as vdo_trk:
         vdo_trk.run()
+    print("--- %s seconds ---" % (time.time() - start_time))
