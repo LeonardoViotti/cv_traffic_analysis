@@ -60,7 +60,7 @@ def draw_trajectory(org_img, trajectory_df, color_dict = color_dict):
     """
     img = cp.deepcopy(org_img)
     
-    obj_class = trajectory_df['class'].iloc[0]
+#     obj_class = trajectory_df['class'].iloc[0]
     
     trajectory_df = trajectory_df[['cx', 'cy']]
     for p in range(1, len(trajectory_df)):
