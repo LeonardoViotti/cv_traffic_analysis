@@ -31,15 +31,34 @@ class_dict = {0 : 'Person',
               1 : 'Bicycle', 
               2 : 'Car',
               3: 'Motorbike', 
-              4: 'Bus', 
-              5: 'Truck'}
+              5: 'Bus', 
+              7: 'Truck'}
 
 
 df = df.replace({"class": class_dict})
 
+# Select a subset of the df to display video
+df = df[df['obj_id'] == 15]
+
 
 #-------------------------------------------------------------------------------------
 # 
+
+# Clip video parameters
+start_frame = df['frame'].min()
+end_frame = df['frame'].max()
+
+# Add a little margin
+end_frame = end_frame + 10
+if start_frame < 10:
+    start_frame = 0
+else:
+    start_frame = start_frame -10
+
+# Set initial frame position 
+# First parameter is 1: CV_CAP_PROP_POS_FRAMES 0-based index of the frame to be decoded/captured next.
+cap.set(1,start_frame)
+
 
 # Check if camera opened successfully
 if (cap.isOpened()== False): 
@@ -49,7 +68,11 @@ if (cap.isOpened()== False):
 idx_frame = 0
 
 # Read until video is completed
-while(cap.isOpened()):
+# while(cap.isOpened()):
+
+# Read until last frame from csv plus a margin
+while(idx_frame < end_frame):
+
     
     idx_frame += 1
     
@@ -63,13 +86,12 @@ while(cap.isOpened()):
         
         # Display the resulting frame
         cv2.imshow('Frame',frame)
+        key = cv2.waitKey(1) 
         
         # Press Q on keyboard to  exit
-        if cv2.waitKey(0) & 0xFF == ord('q'):
+        if key == ord('q'):
             break
-        
-        print(idx_frame)
-    
+            
     # Break the loop
     else: 
         break
