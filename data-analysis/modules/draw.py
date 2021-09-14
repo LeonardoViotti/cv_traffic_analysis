@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 color_dict = {'Person' : (0,255,255), 
               'Bicycle' : (255,0, 255), 
               'Car': (0, 0, 255),
-              'Motorbyke' : (0,255,0), 
+              'Motorbike' : (0,255,0), 
               'Bus' : (255,0,0), 
               'Truck' : (255,255,0)}
             
