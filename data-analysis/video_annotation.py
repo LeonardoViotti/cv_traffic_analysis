@@ -6,6 +6,8 @@
 # - Cut video with to only show frames contained in df
 
 
+export = True
+
 #-------------------------------------------------------------------------------------
 # Settings
 import cv2
@@ -42,6 +44,27 @@ df = df[df['obj_id'] == 15]
 
 
 #-------------------------------------------------------------------------------------
+# Video meta data and exporting 
+
+# Retrieve video frame properties.
+frame_w   = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_h   = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+frame_fps = int(cap.get(cv2.CAP_PROP_FPS))
+
+
+# Specify the value for fourcc
+# fourcc_avi = cv2.VideoWriter_fourcc('M','J','P','G')
+fourcc_mp4 = cv2.VideoWriter_fourcc(*'XVID')
+
+# Specify the video output filenames.
+# file_out_avi = 'video_out.avi'
+file_out_mp4 = 'video_out.mp4'
+
+# Create the video writer objects.
+# out_avi = cv2.VideoWriter(file_out_avi, fourcc_avi, frame_fps, (frame_w,frame_h))
+out_mp4 = cv2.VideoWriter(file_out_mp4, fourcc_mp4, frame_fps, (frame_w,frame_h))
+
+#-------------------------------------------------------------------------------------
 # 
 
 # Clip video parameters
@@ -72,7 +95,6 @@ idx_frame = 0
 
 # Read until last frame from csv plus a margin
 while(idx_frame < end_frame):
-
     
     idx_frame += 1
     
@@ -88,6 +110,9 @@ while(idx_frame < end_frame):
         cv2.imshow('Frame',frame)
         key = cv2.waitKey(1) 
         
+        if export:
+            out_mp4.write(frame)
+        
         # Press Q on keyboard to  exit
         if key == ord('q'):
             break
@@ -98,6 +123,8 @@ while(idx_frame < end_frame):
 
 # When everything done, release the video capture object
 cap.release()
+# out_avi.release()
+out_mp4.release()
 
 # Closes all the frames
 cv2.destroyAllWindows()
