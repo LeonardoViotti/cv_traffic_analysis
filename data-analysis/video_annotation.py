@@ -6,7 +6,9 @@
 # - Cut video with to only show frames contained in df
 
 
-export = True
+export = False
+filename = 'video_out_car.mp4'
+waitkey = 0
 
 #-------------------------------------------------------------------------------------
 # Settings
@@ -58,7 +60,7 @@ fourcc_mp4 = cv2.VideoWriter_fourcc(*'XVID')
 
 # Specify the video output filenames.
 # file_out_avi = 'video_out.avi'
-file_out_mp4 = 'video_out.mp4'
+file_out_mp4 = filename
 
 # Create the video writer objects.
 # out_avi = cv2.VideoWriter(file_out_avi, fourcc_avi, frame_fps, (frame_w,frame_h))
@@ -108,7 +110,7 @@ while(idx_frame < end_frame):
         
         # Display the resulting frame
         cv2.imshow('Frame',frame)
-        key = cv2.waitKey(1) 
+        key = cv2.waitKey(waitkey) 
         
         if export:
             out_mp4.write(frame)
