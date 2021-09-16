@@ -8,7 +8,7 @@
 
 export = False
 filename = 'video_out_all.mp4'
-waitkey = 0
+waitkey = 1
 
 #-------------------------------------------------------------------------------------
 # Settings
@@ -42,7 +42,7 @@ class_dict = {0 : 'Person',
 df = df.replace({"class": class_dict})
 
 # Select a subset of the df to display video
-df = df[df['obj_id'] == 493]
+df = df[df['obj_id'] == 4826]
 
 
 #-------------------------------------------------------------------------------------
