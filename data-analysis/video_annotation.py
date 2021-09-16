@@ -7,7 +7,7 @@
 
 
 export = False
-filename = 'video_out_car.mp4'
+filename = 'video_out_all.mp4'
 waitkey = 0
 
 #-------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ class_dict = {0 : 'Person',
 df = df.replace({"class": class_dict})
 
 # Select a subset of the df to display video
-df = df[df['obj_id'] == 15]
+df = df[df['obj_id'] == 493]
 
 
 #-------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ if (cap.isOpened()== False):
     print("Error opening video stream or file")
 
 # Base variables
-idx_frame = 0
+idx_frame = start_frame
 
 # Read until video is completed
 # while(cap.isOpened()):
