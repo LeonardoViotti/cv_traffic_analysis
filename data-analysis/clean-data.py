@@ -7,6 +7,25 @@ import pandas as pd
 import os
 import copy as cp
 
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+#-------------------------------------------------------------------------------------
+# IDEAS
+
+"""
+
+ - Should I do angles this before or after interpolation?
+ - Sliding angle (every 10 points or so)?
+
+Normally, points that have a sharp angle are distant from each other. Lost tracking for
+a moment and picked-up some frames later on a diferent object.
+
+Maybe a rule if skipped X frames and has a sharp angle? 
+
+"""
+
+
 #-------------------------------------------------------------------------------------
 # Load data
 
@@ -23,11 +42,11 @@ df['cy'] =  round(df['yi'] + (df['yj'] - df['yi'])/2).astype(int)
 # Lag points
 df = df.sort_values(['obj_id', 'frame'])
 
-df['cx_l'] = df.groupby(['obj_id'])['cx'].shift(1)
-df['cy_l'] = df.groupby(['obj_id'])['cy'].shift(1)
+df['cx_l'] = df.groupby(['obj_id'])['cx'].shift(20)
+df['cy_l'] = df.groupby(['obj_id'])['cy'].shift(20)
 
-df['cx_l2'] = df.groupby(['obj_id'])['cx'].shift(2)
-df['cy_l2'] = df.groupby(['obj_id'])['cy'].shift(2)
+df['cx_l2'] = df.groupby(['obj_id'])['cx'].shift(40)
+df['cy_l2'] = df.groupby(['obj_id'])['cy'].shift(40)
 
 
 # Test if there is movement beteween 3 points
@@ -89,8 +108,12 @@ def get_angle(df,
     return angle_degrees
 
 # foo = df[df['obj_id'] == 16]
+# foo = df[df['obj_id'] == 197]
+# foo = df[df['obj_id'] == 53]
 
 # foo['angle'] = get_angle(foo)
 
+# fig = px.scatter(foo, x="cx", y="cy", text="frame", log_x=True, size_max=60)
+# fig.show()
 
-# foo.to_csv('temp.csv')
+# foo.to_csv('temp.csv', index = False)
