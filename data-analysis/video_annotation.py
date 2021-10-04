@@ -131,3 +131,24 @@ out_mp4.release()
 
 # Closes all the frames
 cv2.destroyAllWindows()
+
+
+# import argparse
+
+# def parse_args():
+#     # Parse command line arguments
+#     ap = argparse.ArgumentParser(description="Short clip annotations")
+#     ap.add_argument("-i", "--input", required=True,
+#                     help="Path to input video_file")
+#     ap.add_argument("-idf", "--input_df", required=True,
+#                     help="Path to annotation  file")
+#     ap.add_argument("-id", "--obj_id", required=False,
+#                     help="Object id to filter video")
+#     ap.add_argument("-o", "--output", default="output",
+#                     help="path to output directory")
+#     ap.add_argument('-e', "--export",  nargs='?', const=True, default=False)
+#     return ap.parse_args()
+
+# if __name__ == "__main__":
+#     args = parse_args()
+#     print(args.input_df)
