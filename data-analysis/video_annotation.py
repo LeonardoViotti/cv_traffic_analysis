@@ -8,7 +8,7 @@
 
 export = False
 filename = 'video_out_all.mp4'
-waitkey = 1
+waitkey = 0
 
 #-------------------------------------------------------------------------------------
 # Settings
@@ -42,7 +42,7 @@ class_dict = {0 : 'Person',
 df = df.replace({"class": class_dict})
 
 # Select a subset of the df to display video
-df = df[df['obj_id'] == 4826]
+df = df[df['obj_id'] == 16]
 
 
 #-------------------------------------------------------------------------------------
@@ -107,6 +107,7 @@ while(idx_frame < end_frame):
         # Anotate frame with df
         frame_df = df[df['frame'] == idx_frame]
         draw_boxes(frame, frame_df)
+        add_frame_count(frame, str(idx_frame))
         
         # Display the resulting frame
         cv2.imshow('Frame',frame)

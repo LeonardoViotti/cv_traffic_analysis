@@ -77,3 +77,22 @@ def draw_trajectory(org_img, trajectory_df, color_dict = color_dict):
         # print(p)
         cv2.line(img, tuple(trajectory_df.iloc[p-1]), tuple(trajectory_df.iloc[p]), color_dict[obj_class], 2)
     return(img)
+
+
+def add_frame_count(org_img, text, imutable = False):
+        # Create another image
+    if imutable:
+        img = cp.deepcopy(org_img)
+    else:
+        img = org_img
+    
+    color = (0,0,0)
+    label = 'frame:' + text
+    t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 2)[0]
+    
+    # Text rectangle
+    cv2.rectangle(img,(0, 0),(t_size[0]+3,t_size[1]+3), color,-1)
+    cv2.putText(img,label,(0,t_size[1]), cv2.FONT_HERSHEY_PLAIN, 1, [255,255,255], 1)
+    
+    if imutable:
+        return img
