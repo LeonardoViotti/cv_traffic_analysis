@@ -23,6 +23,10 @@ a moment and picked-up some frames later on a diferent object.
 
 Maybe a rule if skipped X frames and has a sharp angle? 
 
+
+Calculate pixel distance and split trajectories based on that too!
+
+
 """
 
 
@@ -39,19 +43,27 @@ df = pd.read_csv('data/2-sample-30min.csv')
 df['cx'] =  round(df['xi'] + (df['xj'] - df['xi'])/2).astype(int)
 df['cy'] =  round(df['yi'] + (df['yj'] - df['yi'])/2).astype(int)
 
-# Lag points
+# Lag points to calculate angle
 df = df.sort_values(['obj_id', 'frame'])
 
-df['cx_l'] = df.groupby(['obj_id'])['cx'].shift(20)
-df['cy_l'] = df.groupby(['obj_id'])['cy'].shift(20)
+df['cx_l'] = df.groupby(['obj_id'])['cx'].shift(5)
+df['cy_l'] = df.groupby(['obj_id'])['cy'].shift(5)
 
-df['cx_l2'] = df.groupby(['obj_id'])['cx'].shift(40)
-df['cy_l2'] = df.groupby(['obj_id'])['cy'].shift(40)
+df['cx_f'] = df.groupby(['obj_id'])['cx'].shift(-5)
+df['cy_f'] = df.groupby(['obj_id'])['cy'].shift(-5)
 
 
 # Test if there is movement beteween 3 points
-df['stopepd'] = (df['cx'] == df['cx_l']) & (df['cy'] == df['cy_l']) | (df['cx_l'] == df['cx_l2']) & (df['cy_l'] == df['cy_l2'])
-df['stopepd'] = df['stopepd'].astype(int)
+# df['stopepd'] = (df['cx'] == df['cx_l']) & (df['cy'] == df['cy_l']) | (df['cx_l'] == df['cx_f']) & (df['cy_l'] == df['cy_f'])
+# df['stopepd'] = df['stopepd'].astype(int)
+
+# Lag frame to test if lost tracking for long
+df['last_frame'] = df.groupby(['obj_id'])['frame'].shift(1)
+df['frame_diff'] = df['last_frame'] - df['frame']
+
+
+
+
 
 
 #-------------------------------------------------------------------------------------
@@ -68,9 +80,9 @@ For example, if tracking jumps from one car going north to another going south
 
 
 def get_angle(df,
-              p1_cols = ['cx', 'cy'],
-              p2_cols = ['cx_l', 'cy_l'],
-              p3_cols = ['cx_l2', 'cy_l2']):
+              p2_cols = ['cx', 'cy'],
+              p1_cols = ['cx_l', 'cy_l'],
+              p3_cols = ['cx_f', 'cy_f']):
     """
     Calculate angle between 3 points vectorially.
     
@@ -107,13 +119,21 @@ def get_angle(df,
     
     return angle_degrees
 
-# foo = df[df['obj_id'] == 16]
+foo = df[df['obj_id'] == 16]
 # foo = df[df['obj_id'] == 197]
 # foo = df[df['obj_id'] == 53]
 
-# foo['angle'] = get_angle(foo)
+foo['angle'] = get_angle(foo).round()
 
-# fig = px.scatter(foo, x="cx", y="cy", text="frame", log_x=True, size_max=60)
-# fig.show()
+
+foo[['frame','cx', 'cy', 'cx_l', 'cy_l', 'cx_f', 'cy_f', 'last_frame', 'frame_diff', 'angle']].to_clipboard(index = False)
+
+
+fig = px.scatter(foo, x="cx", y="cy", 
+                #  text="frame", 
+                 log_x=True, 
+                 size_max=60,
+                  hover_data=["frame"])
+fig.show()
 
 # foo.to_csv('temp.csv', index = False)
